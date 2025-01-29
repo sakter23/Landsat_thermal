@@ -1,0 +1,41 @@
+#multiplying by the factors and converting in celcius
+import rasterio
+import numpy as np
+import os
+from glob import glob
+
+def process_landsat_folder(input_folder, output_folder):
+    # Ensure the output folder exists
+    os.makedirs(output_folder, exist_ok=True)
+
+    # Get all .tif files in the input folder
+    raster_files = glob(os.path.join(input_folder, "*.tif"))
+
+    for raster_file in raster_files:
+        # Create an output filename with a "processed_" prefix to avoid overwriting
+        output_file = os.path.join(output_folder, "processed_" + os.path.basename(raster_file))
+
+        with rasterio.open(raster_file) as src:
+            raster_data = src.read().astype(float)  # Convert to float for calculations
+
+            # Apply the transformation: (raster * 0.00341802) + 149 - 273
+            transformed_data = raster_data * 0.00341802 + 149 - 273
+
+            # Compute the average raster across bands
+            avg_raster = np.mean(transformed_data, axis=0)
+
+            # Define the output profile
+            profile = src.profile
+            profile.update(dtype=rasterio.float32, count=1)
+
+            # Save the processed raster
+            with rasterio.open(output_file, 'w', **profile) as dst:
+                dst.write(avg_raster.astype(np.float32), 1)
+
+        print(f"Processed: {raster_file} -> {output_file}")
+
+# Example usage
+input_folder = r'F:/Thesis/Landsat Thermal/2014 imagery'
+output_folder = r'F:/Thesis/Landsat Thermal/2014_processed'  # Use a separate folder for outputs
+
+process_landsat_folder(input_folder, output_folder)
