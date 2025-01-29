@@ -35,7 +35,7 @@ def process_landsat_folder(input_folder, output_folder):
         print(f"Processed: {raster_file} -> {output_file}")
 
 # Example usage
-input_folder = r'F:/Thesis/Landsat Thermal/2014 imagery'
-output_folder = r'F:/Thesis/Landsat Thermal/2014_processed'  # Use a separate folder for outputs
+input_folder = r'F:/Landsat Thermal imagery'
+output_folder = r'F:/Landsat Thermal_processed'  # Use a separate folder for outputs
 
 process_landsat_folder(input_folder, output_folder)
